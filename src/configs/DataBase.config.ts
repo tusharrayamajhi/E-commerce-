@@ -1,6 +1,5 @@
 /* eslint-disable prettier/prettier */
 import { Module } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Admin } from "src/admin/entities/Admin.entities";
 import { Category } from "src/category/entities/Category.entities";
@@ -18,20 +17,18 @@ import { WishList } from "src/wishlist/entities/wishlist.entity";
 
 @Module({
     imports: [
-      TypeOrmModule.forRootAsync({
-        inject: [ConfigService],
-        useFactory: (configService: ConfigService) => ({
-          type: "mysql",
-          host: process.env.DATABASE_HOST,
-          port: configService.get<number>('DATABASE_PORT'),
-          username: process.env.DATABASE_USERNAME,
-          password: process.env.DATABASE_PASSWORD,
-          database: process.env.DATABASE_NAME,
+      TypeOrmModule.forRoot({
+          type: "postgres",
+          url:`${process.env.DBURL}`,
+          // host: process.env.DATABASE_HOST,
+          // port: configService.get<number>('DATABASE_PORT'),
+          // username: process.env.DATABASE_USERNAME,
+          // password: process.env.DATABASE_PASSWORD,
+          // database: process.env.DATABASE_NAME,
           entities: [Product,SellerLogin,Admin,Category,SubCategory,BussinessAddressInfo,BusinessInfo,BusinessContactInfo,WebsiteInfo,PersonalInfo,Seller,Review,WishList],
-          synchronize: true,
+          synchronize: false,
           autoLoadEntities: true,
           logging: false,
-        }),
       }),
     ],
   })
