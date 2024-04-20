@@ -17,6 +17,7 @@ import { WishlistModule } from './wishlist/wishlist.module';
 
 @Module({
   imports: [
+    DataBaseConnection,
     BullModule.forRoot({
       redis:{
         host:"127.0.0.1",
@@ -35,7 +36,7 @@ import { WishlistModule } from './wishlist/wishlist.module';
     ProductModule,
     VendorModule,
     ConfigModule.forRoot({isGlobal:true}),
-    DataBaseConnection,
+    
     CategoryModule, 
     AdminModule,
     JwtModule.register({
