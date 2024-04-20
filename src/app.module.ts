@@ -14,10 +14,10 @@ import { UserModule } from './user/user.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { BullModule } from '@nestjs/bull';
 import { WishlistModule } from './wishlist/wishlist.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
-    DataBaseConnection,
     BullModule.forRoot({
       redis:{
         host:"127.0.0.1",
@@ -36,7 +36,7 @@ import { WishlistModule } from './wishlist/wishlist.module';
     ProductModule,
     VendorModule,
     ConfigModule.forRoot({isGlobal:true}),
-    
+    DataBaseConnection,
     CategoryModule, 
     AdminModule,
     JwtModule.register({

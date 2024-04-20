@@ -8,7 +8,7 @@ export class Review extends BaseEntity {
     @Column({default:0})
     rating:number
 
-    @Column('longtext',{nullable:true})
+    @Column({nullable:true})
     comment:string
 
     @ManyToOne(()=>Product,(product)=>product.review)
