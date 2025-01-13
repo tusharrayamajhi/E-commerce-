@@ -86,6 +86,8 @@ export class VendorController {
 
   @Delete(':id')
   @Roles(roles.admin,roles.vendor)
+  @ApiBearerAuth("jwt")
+  @UseGuards(CanAccess)
   async deleteVendor(@Param('id', ParseUUIDPipe) id:string){
     try{
       return await this.vendorService.deleteVendor(id);

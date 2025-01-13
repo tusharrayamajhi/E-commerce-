@@ -1,7 +1,8 @@
 /* eslint-disable prettier/prettier */
 import { BaseEntity } from "src/Base_Entities/Base_Entities";
+import { Review } from "src/review/entities/review.entity";
 import { WishList } from "src/wishlist/entities/wishlist.entity";
-import { Column, Entity, OneToMany, Unique } from "typeorm";
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, Unique } from "typeorm";
 
 @Entity()
 @Unique(["email"])
@@ -23,4 +24,11 @@ export class User extends BaseEntity {
 
     @OneToMany(()=>WishList,(wishlist)=>wishlist.user)
     wishlist:WishList[]
+    
+    @OneToMany(()=>Review,(review)=>review.user)
+    review:Review[]
+
+    // @OneToOne(()=>Cart)
+    // @JoinColumn()
+    // cart:Cart
 }

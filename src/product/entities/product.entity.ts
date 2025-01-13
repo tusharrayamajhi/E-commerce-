@@ -39,4 +39,6 @@ export class Product extends BaseEntity{
 
   @OneToMany(()=>WishList,(wishlist)=>wishlist.product)
   wishlist:WishList[]
+
+  
 }

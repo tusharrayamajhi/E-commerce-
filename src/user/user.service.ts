@@ -20,13 +20,26 @@ import { ForgotpasswordChangeDto } from './dto/forgortpasswordchange.dto';
 @Injectable()
 export class UserService {
   
+  
   constructor(
     @InjectRepository(User) private userRepo:Repository<User>,
     private readonly jwtService:JwtService,
     @Inject(CACHE_MANAGER) private cacheManager:Cache,
     @InjectQueue("send_OTP") private OTPemail:Queue
-    ){}
-    
+  ){}
+  
+  async getAllUserData() {
+    try{
+      const userData = await this.userRepo.find({});
+      if(!userData || userData.length == 0){
+        throw new HttpException("no data in database",HttpStatus.NOT_FOUND)
+      }
+      return {userData}
+    }catch(err){
+      throw new HttpException(err,HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
+
     async forgotPasswordChange(forgotpasswordChangeDto: ForgotpasswordChangeDto) {
       try{
         const user = await this.userRepo.findOne({where:{email:Equal(forgotpasswordChangeDto.email)}})
@@ -88,9 +101,21 @@ export class UserService {
     }
 
 
-  async getUserById(req: any) {
+  async getLoginUserData(req: any) {
     try{
       const user = await this.userRepo.findOne({where:{id:Equal(req.user.id)}})
+      if(!user){
+        throw new HttpException("invalid user",HttpStatus.NOT_FOUND)
+      }
+      return {user}
+    }catch(err){
+      throw new HttpException(err,HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
+
+  async getUserById(id:string) {
+    try{
+      const user = await this.userRepo.findOne({where:{id:Equal(id)}})
       if(!user){
         throw new HttpException("invalid user",HttpStatus.NOT_FOUND)
       }
@@ -112,7 +137,8 @@ export class UserService {
       if(!user.isVerify){
         throw new HttpException("user is not verified",HttpStatus.NOT_FOUND)
       }
-      const token = this.jwtService.sign({email:user.email,id:user.id,role:roles.user})
+      const token = this.jwtService.sign({email:user.email,id:user.id,role:roles.user});
+      await this.cacheManager.set(`token:${token}`,token,86400000);
       if(!token){
         throw new HttpException("cannot generate token",HttpStatus.NOT_FOUND)
       }

@@ -41,6 +41,7 @@ export class WishlistService {
             throw new HttpException(err,HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
+    
     async getByUserId(req: any) {
     try{
         const user = await this.userRepo.findOne({where:{id:Equal(req.user.id)},relations:{wishlist:true}})

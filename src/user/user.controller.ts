@@ -1,8 +1,8 @@
 /* eslint-disable prettier/prettier */
-import { Controller,Post, Body, Delete, HttpException, HttpStatus, ValidationPipe, Get, Req } from '@nestjs/common';
+import { Controller,Post, Body, Delete, HttpException, HttpStatus, ValidationPipe, Get, Req, UseGuards, Param, ParseUUIDPipe } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { VerifyOTPDto } from './dto/VerifyOTP.dto';
 import { UserLoginDto } from './dto/UserLogin.dto';
 import { Roles } from 'src/decorator/Roles.decorator';
@@ -11,6 +11,7 @@ import { Request } from 'express';
 import { ChangePasswordDto } from './dto/changepassword.dto';
 import { ForgotpasswordDto } from './dto/forgotpassword.dto';
 import { ForgotpasswordChangeDto } from './dto/forgortpasswordchange.dto';
+import { CanAccess } from 'src/guard/CanAccess.guard';
 
 @Controller('user')
 @ApiTags("User")
@@ -44,16 +45,31 @@ export class UserController {
     }
   }
 
-  @Get()
+  @Get("getById")
   @Roles(roles.user)
-  async getUserById(@Req() req:Request){
+  @UseGuards(CanAccess)
+  @ApiBearerAuth("jwt")
+  async getLoginUserData(@Req() req:Request){
     try{
-      return await this.userService.getUserById(req);
+      return await this.userService.getLoginUserData(req);
     }catch(err){
       throw new HttpException(err,HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
 
+ 
+
+  @Get('getAllTheUser')
+  @Roles(roles.admin)
+  @UseGuards(CanAccess)
+  @ApiBearerAuth("jwt")
+  async getAllUserData(){
+    try{
+      return await this.userService.getAllUserData();
+    }catch(err){
+      throw new HttpException(err,HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
 
   @Post("changePassword")
   async changePassword(@Body(new ValidationPipe({whitelist: true})) changePasswordDto:ChangePasswordDto){
@@ -85,6 +101,19 @@ export class UserController {
   @Delete("del")
   async delete(){
     return await this.userService.delete()
+  }
+
+
+  @Get(":id")
+  @Roles(roles.admin)
+  @UseGuards(CanAccess)
+  @ApiBearerAuth("jwt")
+  async getUserById(@Param('id', ParseUUIDPipe) id:string){
+    try{
+      return await this.userService.getUserById(id);
+    }catch(err){
+      throw new HttpException(err,HttpStatus.INTERNAL_SERVER_ERROR)
+    }
   }
 
 }

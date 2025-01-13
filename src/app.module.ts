@@ -2,7 +2,7 @@
 import { Module } from '@nestjs/common';
 import { ProductModule } from './product/product.module';
 import { VendorModule } from './vendor/vendor.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DataBaseConnection } from './configs/DataBase.config';
 import { CategoryModule } from './category/category.module';
 import { AdminModule } from './admin/admin.module';
@@ -14,46 +14,50 @@ import { UserModule } from './user/user.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { BullModule } from '@nestjs/bull';
 import { WishlistModule } from './wishlist/wishlist.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
-    BullModule.forRoot({
-      redis:{
-        host:"127.0.0.1",
-        port:6379
-      }
-    }),
-    MailerModule.forRoot({
-      transport:{
-        host:"smtp.gmail.com",
-        auth:{
-          user:"tusharrayamajhi6@gmail.com",
-          pass:"mfto jhyi rpmq cmtz"
+    // BullModule.forRoot({
+    //   redis:{
+    //     host:"127.0.0.1",
+    //     port:6379
+    //   }
+    // }),
+    MailerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (confogservice: ConfigService) => ({
+        transport: {
+          host: "smtp.gmail.com",
+          auth: {
+            user: confogservice.get<string>("GMAIL_ID"),
+            pass: confogservice.get<string>("GMAIL_PASSWORD"),
+          }
         }
-      }
+      })
     }),
     ProductModule,
     VendorModule,
-    ConfigModule.forRoot({isGlobal:true}),
+    ConfigModule.forRoot({ isGlobal: true }),
     DataBaseConnection,
-    CategoryModule, 
+    CategoryModule,
     AdminModule,
     JwtModule.register({
-    secret:process.env.JWTSECRET,
-    global:true,
-    signOptions:{
-        expiresIn:"1d"
-    }
-    }), 
-    CacheModule.register({isGlobal:true}),
+      secret: process.env.JWTSECRET,
+      global: true,
+      signOptions: {
+        expiresIn: "1d"
+      }
+    }),
+    CacheModule.register({ isGlobal: true }),
     SubCategoryModule,
     ReviewModule,
     UserModule,
     WishlistModule,
-    ],
+    // CartModule
+  ],
   controllers: [],
   providers: [],
-  exports:[]
+  exports: []
 })
-export class AppModule {}
+export class AppModule { }

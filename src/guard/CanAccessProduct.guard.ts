@@ -21,6 +21,7 @@ export class CanAccessProduct implements CanActivate{
         }
         const newToken = token.split(" ")[1]
         const decode = await this.jwtService.decode(await this.cacheManager.get(`token:${newToken}`));
+        console.log(decode)
         if(!decode){
             return false;
         }

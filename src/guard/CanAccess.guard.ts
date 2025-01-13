@@ -15,12 +15,12 @@ export class CanAccess implements CanActivate{
         const roles  = this.reflector.get<string[]>('roles',context.getHandler())
         const req = context.switchToHttp().getRequest()
         const token = req.headers.authorization;
-        console.log(token)
+        // console.log(token)
         if(!token){
             return false;
         }
         const newToken = token.split(" ")[1]
-        console.log(newToken)
+        // console.log(newToken)
         const decode = await this.jwtService.decode(await this.cacheManager.get(`token:${newToken}`));
         console.log(decode)
         if(!decode){
