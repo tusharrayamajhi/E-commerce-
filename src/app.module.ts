@@ -12,7 +12,6 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { ReviewModule } from './review/review.module';
 import { UserModule } from './user/user.module';
 import { MailerModule } from '@nestjs-modules/mailer';
-import { BullModule } from '@nestjs/bull';
 import { WishlistModule } from './wishlist/wishlist.module';
 
 @Module({
