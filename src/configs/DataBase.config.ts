@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { Module } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Admin } from "src/admin/entities/Admin.entities";
 // import { Cart } from "src/cart/entities/cart.entities";
@@ -19,22 +19,22 @@ import { WishList } from "src/wishlist/entities/wishlist.entity";
 
 @Module({
     imports: [
-      // TypeOrmModule.forRootAsync({
-      //   imports:[ConfigModule],
-      //   inject:[ConfigService],
-      //   useFactory: (configservice:ConfigService)=>({
-      //     type: "mysql",
-      //     host: configservice.get<string>("DATABASE_HOST"),
-      //     port: +configservice.get<string>("DATABASE_PORT"),
-      //     username: configservice.get<string>("DATABASE_USERNAME"),
-      //     password: configservice.get<string>("DATABASE_PASSWORD"),
-      //     database: configservice.get<string>("DATABASE_NAME"),
-      //     entities: [Product,SellerLogin,Admin,Category,SubCategory,BussinessAddressInfo,BusinessInfo,BusinessContactInfo,WebsiteInfo,PersonalInfo,Seller,Review,WishList],
-      //     synchronize: true,
-      //     autoLoadEntities: true,
-      //     logging: false,
-      //   })
-      // }),
+      TypeOrmModule.forRootAsync({
+        imports:[ConfigModule],
+        inject:[ConfigService],
+        useFactory: (configservice:ConfigService)=>({
+          type: "mysql",
+          host: configservice.get<string>("DATABASE_HOST"),
+          port: +configservice.get<string>("DATABASE_PORT"),
+          username: configservice.get<string>("DATABASE_USERNAME"),
+          password: configservice.get<string>("DATABASE_PASSWORD"),
+          database: configservice.get<string>("DATABASE_NAME"),
+          entities: [Product,SellerLogin,Admin,Category,SubCategory,BussinessAddressInfo,BusinessInfo,BusinessContactInfo,WebsiteInfo,PersonalInfo,Seller,Review,WishList],
+          synchronize: true,
+          autoLoadEntities: true,
+          logging: false,
+        })
+      }),
 
 
       // TypeOrmModule.forRoot({
@@ -47,17 +47,17 @@ import { WishList } from "src/wishlist/entities/wishlist.entity";
       //   synchronize: true, // Set to false in production
       // }),
 
-      TypeOrmModule.forRootAsync({
-        useFactory:(configservice:ConfigService)=>({
-          type:'postgres',
-          url:configservice.get<string>("DBURL"),
-          entities:[Product,SellerLogin,Admin,Category,SubCategory,BussinessAddressInfo,BusinessInfo,BusinessContactInfo,WebsiteInfo,PersonalInfo,Seller,Review,WishList],
-          ssl:true,
-          autoLoadEntities: true,
-          synchronize: true, 
-        }),
-        inject:[ConfigService]
-      })
+      // TypeOrmModule.forRootAsync({
+      //   useFactory:(configservice:ConfigService)=>({
+      //     type:'postgres',
+      //     url:configservice.get<string>("DBURL"),
+      //     entities:[Product,SellerLogin,Admin,Category,SubCategory,BussinessAddressInfo,BusinessInfo,BusinessContactInfo,WebsiteInfo,PersonalInfo,Seller,Review,WishList],
+      //     ssl:true,
+      //     autoLoadEntities: true,
+      //     synchronize: true, 
+      //   }),
+      //   inject:[ConfigService]
+      // })
 
 
     ],
